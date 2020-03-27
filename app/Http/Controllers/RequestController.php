@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\TestRequest;
+use Illuminate\Support\Facades\Auth;
+
 
 class RequestController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +17,14 @@ class RequestController extends Controller
      */
     public function index()
     {
-        dd(__METHOD__);
+        if (Auth::check()) {
+            $userId = Auth::user()->id;
+            
+            $columns = ['id', 'title', 'parent_id'];
+            $userRequests = TestRequest::all()->where('user_id', '==', $userId);
+
+            return view('requests.index', compact('userRequests'));
+        }
     }
 
     /**
