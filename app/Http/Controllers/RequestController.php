@@ -44,8 +44,9 @@ class RequestController extends Controller
     public function store(TestRequestRequest $request)
     {
         $data = $request->input();
+        $path = $request->file('filename')->store('uploads', 'public');
+        $data['filename'] = $path;
 
-        dd($_GET);
         $item = new TestRequest();
         $item->fill($data);
         $item->save();
