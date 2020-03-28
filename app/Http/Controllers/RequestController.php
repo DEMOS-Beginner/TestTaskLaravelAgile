@@ -57,7 +57,7 @@ class RequestController extends Controller
      */
     public function show($id)
     {
-        //
+        dd(__METHOD__, $id);
     }
 
     /**
