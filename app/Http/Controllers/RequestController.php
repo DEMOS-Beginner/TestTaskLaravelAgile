@@ -22,7 +22,6 @@ class RequestController extends Controller
             
             $columns = ['id', 'title', 'parent_id'];
             $userRequests = TestRequest::all()->where('user_id', '==', $userId);
-
             return view('requests.index', compact('userRequests'));
         }
     }
@@ -34,7 +33,9 @@ class RequestController extends Controller
      */
     public function create()
     {
-        //
+        if (Auth::check()) {
+            return view('requests.create');
+        }
     }
 
     /**
@@ -45,7 +46,7 @@ class RequestController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd(__METHOD__, $request);
     }
 
     /**
