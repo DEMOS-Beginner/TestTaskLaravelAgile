@@ -20,6 +20,9 @@
 					<table class="table table-hover">
 						<thead>
 							<tr>
+								@if(Auth::user()->isAdmin)
+								<th>Автор заявки</th>
+								@endif
 								<th>Тема заявки</th>
 								<th>Дата отправки</th>
 							</tr>
@@ -27,6 +30,9 @@
 						<tbody>
 							@foreach($userRequests as $request)
 								<tr> 
+									@if(Auth::user()->isAdmin)
+									<td>{{$request->user->name}}</td>
+									@endif									
 									<td>
 										<a href="{{route('requests.show', $request->id)}}" class='btn btn-link'>
 											{{ $request->subject }}

@@ -7,6 +7,7 @@ use App\Http\Requests\TestRequestRequest;
 use App\Models\TestRequest;
 use Illuminate\Support\Facades\Auth;
 use Mail;
+use App\User;
 
 class RequestController extends Controller
 {
@@ -21,7 +22,11 @@ class RequestController extends Controller
         $userId = Auth::user()->id; //Only authentificated users can use this method (Auth 100%)
         
         $columns = ['id', 'title', 'parent_id'];
-        $userRequests = TestRequest::all()->where('user_id', '==', $userId);
+        if (!Auth::user()->isAdmin) {
+            $userRequests = TestRequest::all()->where('user_id', '==', $userId);
+        } else {
+            $userRequests = TestRequest::all();            
+        }
         return view('requests.index', compact('userRequests'));
     }
 
@@ -56,7 +61,7 @@ class RequestController extends Controller
         $item->save();
 
         if ($item) {
-/*            Mail::send(['text'=>"mail"], ['name', ''], function ($message) use ($data) {
+/*            Mail::send(['text'=>"mail"], ['name', ''], function ($message) {
                 $message->to('dima.dmitry1234.maksimov@mail.ru', '')->subject('Новая заявка');
                 $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
             }
@@ -111,7 +116,17 @@ class RequestController extends Controller
      */
     public function destroy($id)
     {
+        $userId = TestRequest::find($id)->user_id;
+
         $result = TestRequest::destroy($id);
+        if (Auth::user()->isAdmin) {
+            $userEmail = User::find($userId)->email;
+/*            Mail::send(['text'=>"mail_destroy"], ['name', ''], function ($message) use ($userEmail) {
+                $message->to($userEmail, '')->subject('Заявка закрыта');
+                $message->from(getenv('MAIL_USERNAME'), 'Заявка закрыта');
+            }
+            );         */
+        }
 
         if ($result) {
             return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
