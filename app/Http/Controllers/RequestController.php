@@ -116,21 +116,44 @@ class RequestController extends Controller
      */
     public function destroy($id)
     {
-        $userId = TestRequest::find($id)->user_id;
+
 
         $result = TestRequest::destroy($id);
-        if (Auth::user()->isAdmin) {
-            $userEmail = User::find($userId)->email;
-/*            Mail::send(['text'=>"mail_destroy"], ['name', ''], function ($message) use ($userEmail) {
-                $message->to($userEmail, '')->subject('Заявка закрыта');
-                $message->from(getenv('MAIL_USERNAME'), 'Заявка закрыта');
-            }
-            );         */
-        }
+
 
         if ($result) {
             return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
         }
         return back()->withErrors(['msg'=>'Ошибка удаления']);
     }
+
+    /**
+     * Close the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function close($id)
+    {
+        $item = TestRequest::find($id);
+        $userId = $item->user_id;
+        $data = ['status' => 1];
+        $item->fill($data);
+        $item->save();
+
+/*        if (Auth::user()->isAdmin) {
+            $userEmail = User::find($userId)->email;
+            Mail::send(['text'=>"mail_destroy"], ['name', ''], function ($message) use ($userEmail)
+            {
+                $message->to($userEmail, '')->subject('Заявка закрыта');
+                $message->from(getenv('MAIL_USERNAME'), 'Заявка закрыта');
+            });
+        }*/
+        if ($item) {
+            return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
+        }
+        return back()->withErrors(['msg'=>'Ошибка при закрытии']);
+    }
+
+
 }

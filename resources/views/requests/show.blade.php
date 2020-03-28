@@ -8,11 +8,18 @@
 				{{$itemRequest->text}}
 			</div>
 			<time>{{$itemRequest->created_at}}</time>
-			<form action="{{route('requests.destroy', $itemRequest->id)}}" method='POST'>
-				@method('DELETE')
-				@csrf
-				<button type="submit" class='btn btn-danger'>Закрыть заявку</button>
-			</form>
+			@if (!Auth::user()->isAdmin)
+				<form action="{{route('requests.destroy', $itemRequest->id)}}" method='POST'>
+					@method('DELETE')
+					@csrf
+					<button type="submit" class='btn btn-danger'>Закрыть заявку</button>
+				</form>
+			@else
+				<form action="{{route('requests.close', $itemRequest->id)}}">
+					@csrf
+					<button type="submit" class='btn btn-danger'>Закрыть заявку</button>
+				</form>			
+			@endif
 		</div>
 	</div>
 @endsection

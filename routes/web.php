@@ -20,3 +20,5 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
 	Route::resource('/requests', 'RequestController')->names('requests');
 });
+
+Route::get('/requests/{id}/close', 'RequestController@close')->name('requests.close');
