@@ -17,13 +17,11 @@ class RequestController extends Controller
      */
     public function index()
     {
-        if (Auth::check()) {
-            $userId = Auth::user()->id;
-            
-            $columns = ['id', 'title', 'parent_id'];
-            $userRequests = TestRequest::all()->where('user_id', '==', $userId);
-            return view('requests.index', compact('userRequests'));
-        }
+        $userId = Auth::user()->id; //Only authentificated users can use this method (Auth 100%)
+        
+        $columns = ['id', 'title', 'parent_id'];
+        $userRequests = TestRequest::all()->where('user_id', '==', $userId);
+        return view('requests.index', compact('userRequests'));
     }
 
     /**
@@ -33,9 +31,7 @@ class RequestController extends Controller
      */
     public function create()
     {
-        if (Auth::check()) {
-            return view('requests.create');
-        }
+        return view('requests.create');
     }
 
     /**
@@ -57,7 +53,8 @@ class RequestController extends Controller
      */
     public function show($id)
     {
-        dd(__METHOD__, $id);
+        $itemRequest = TestRequest::find($id);
+        return view('requests.show', compact('itemRequest'));
     }
 
     /**
