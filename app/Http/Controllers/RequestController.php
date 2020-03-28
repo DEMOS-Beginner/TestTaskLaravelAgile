@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\TestRequestRequest;
 use App\Models\TestRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,9 +41,20 @@ class RequestController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TestRequestRequest $request)
     {
-        dd(__METHOD__, $request);
+        $data = $request->input();
+
+        dd($_GET);
+        $item = new TestRequest();
+        $item->fill($data);
+        $item->save();
+
+        if ($item) {
+            return redirect()->route('requests.index', [$item->id])->with(['success'=>'Успешно сохранено']);
+        } else {
+            return back()->withErrors(['msg'=>"Ошибка сохранения"])->withInput();           
+        }       
     }
 
     /**
