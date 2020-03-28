@@ -17,10 +17,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', function () {
-    return view('index');
-});
-
 Route::group(['middleware' => 'auth'], function () {
 	Route::resource('/requests', 'RequestController')->names('requests');
 });
