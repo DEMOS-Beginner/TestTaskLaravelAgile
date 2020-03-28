@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\TestRequestRequest;
 use App\Models\TestRequest;
 use Illuminate\Support\Facades\Auth;
-
+use Mail;
 
 class RequestController extends Controller
 {
@@ -44,14 +44,24 @@ class RequestController extends Controller
     public function store(TestRequestRequest $request)
     {
         $data = $request->input();
-        $path = $request->file('filename')->store('uploads', 'public');
-        $data['filename'] = $path;
+        $file = $request->file('filename');
+        if ($file) {
+            $path = $file->store('uploads', 'public');
+            $data['filename'] = $path;
+        }
+
 
         $item = new TestRequest();
         $item->fill($data);
         $item->save();
 
         if ($item) {
+/*            Mail::send(['text'=>"mail"], ['name', ''], function ($message) use ($data) {
+                $message->to('dima.dmitry1234.maksimov@mail.ru', '')->subject('Новая заявка');
+                $message->from(Auth::user()->email, 'Новая заявка');
+            }
+            );*/
+
             return redirect()->route('requests.index', [$item->id])->with(['success'=>'Успешно сохранено']);
         } else {
             return back()->withErrors(['msg'=>"Ошибка сохранения"])->withInput();           
