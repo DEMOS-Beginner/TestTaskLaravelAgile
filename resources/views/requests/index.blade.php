@@ -34,7 +34,8 @@
 									<td>{{$request->user->name}}</td>
 									@endif									
 									<td>
-										<a href="{{route('requests.show', $request->id)}}" class='btn btn-link'>
+										<a @if ($request->status == 1) style='color: green;' @endif
+										 href="{{route('requests.show', $request->id)}}" class='btn btn-link'>
 											{{ $request->subject }}
 										</a>						
 									</td>

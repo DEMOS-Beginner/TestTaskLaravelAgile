@@ -25,7 +25,7 @@ class RequestController extends Controller
         if (!Auth::user()->isAdmin) {
             $userRequests = TestRequest::all()->where('user_id', '==', $userId);
         } else {
-            $userRequests = TestRequest::all();            
+            $userRequests = TestRequest::all()->where('status', '==', 0);            
         }
         return view('requests.index', compact('userRequests'));
     }
@@ -117,7 +117,7 @@ class RequestController extends Controller
     public function destroy($id)
     {
 
-
+        dd(__METHOD__);
         $result = TestRequest::destroy($id);
 
 
@@ -140,7 +140,7 @@ class RequestController extends Controller
         $data = ['status' => 1];
         $item->fill($data);
         $item->save();
-
+         dd(__METHOD__);
 /*        if (Auth::user()->isAdmin) {
             $userEmail = User::find($userId)->email;
             Mail::send(['text'=>"mail_destroy"], ['name', ''], function ($message) use ($userEmail)

@@ -20,6 +20,11 @@
 					<button type="submit" class='btn btn-danger'>Закрыть заявку</button>
 				</form>			
 			@endif
+			@if ($itemRequest->status === 1)
+				<i style='color: green'>
+					Заявка закрыта менеджером
+				</i>
+			@endif
 		</div>
 	</div>
 @endsection
