@@ -8,6 +8,11 @@
 				{{$itemRequest->text}}
 			</div>
 			<time>{{$itemRequest->created_at}}</time>
+			<form action="{{route('requests.destroy', $itemRequest->id)}}" method='POST'>
+				@method('DELETE')
+				@csrf
+				<button type="submit" class='btn btn-danger'>Закрыть заявку</button>
+			</form>
 		</div>
 	</div>
 @endsection

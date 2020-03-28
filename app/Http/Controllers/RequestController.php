@@ -111,6 +111,11 @@ class RequestController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $result = TestRequest::destroy($id);
+
+        if ($result) {
+            return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
+        }
+        return back()->withErrors(['msg'=>'Ошибка удаления']);
     }
 }
