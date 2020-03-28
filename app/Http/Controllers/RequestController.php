@@ -58,7 +58,7 @@ class RequestController extends Controller
         if ($item) {
 /*            Mail::send(['text'=>"mail"], ['name', ''], function ($message) use ($data) {
                 $message->to('dima.dmitry1234.maksimov@mail.ru', '')->subject('Новая заявка');
-                $message->from(Auth::user()->email, 'Новая заявка');
+                $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
             }
             );*/
 
