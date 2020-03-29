@@ -3,6 +3,11 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\TestRequest;
+use App\Models\Message;
+use App\Observers\RequestObserver;
+use App\Observers\MessageObserver;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        TestRequest::observe(RequestObserver::class);
+        Message::observe(MessageObserver::class);
     }
 }

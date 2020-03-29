@@ -21,13 +21,12 @@ class RequestController extends Controller
     {
         $userId = Auth::user()->id; //Only authentificated users can use this method (Auth 100%)
         
-
-        if (!Auth::user()->isAdmin) {
+        if (!Auth::user()->isAdmin) { 
             $userRequests = (new TestRequest())->all()->where('user_id', '==', $userId);
         } else {
-            $userRequests = (new TestRequest())->select()->where('status', '==', 0)->orderBy('created_at')->with(['user:id,name'])->get();
-   
+            $userRequests = (new TestRequest())->select()->where('status', '==', 0)->orderBy('created_at')->with(['user:id,name'])->get(); 
         }
+
         return view('requests.index', compact('userRequests'));
     }
 
@@ -51,27 +50,19 @@ class RequestController extends Controller
     {
         $data = $request->input();
         $file = $request->file('filename');
+
         if ($file) {
             $path = $file->store('uploads', 'public');
             $data['filename'] = $path;
         }
 
-
-        $item = new TestRequest();
-        $item->fill($data);
-        $item->save();
+        $item = (new TestRequest())->create($data);
 
         if ($item) {
-            Mail::send(['text'=>"mail"], ['name', ''], function ($message) {
-                $message->to('dima.dmitry1234.maksimov@mail.ru', '')->subject('Новая заявка');
-                $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
-            }
-            );
-
             return redirect()->route('requests.index', [$item->id])->with(['success'=>'Успешно сохранено']);
-        } else {
-            return back()->withErrors(['msg'=>"Ошибка сохранения"])->withInput();           
-        }       
+        }
+        return back()->withErrors(['msg'=>"Ошибка сохранения"])->withInput();           
+              
     }
 
     /**
@@ -97,14 +88,8 @@ class RequestController extends Controller
 
         $result = TestRequest::destroy($id);
 
-
         if ($result) {
             return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
-            Mail::send(['text'=>"mail_close"], ['name', ''], function ($message) {
-                $message->to('dima.dmitry1234.maksimov@mail.ru', '')->subject('Заявка закрыта');
-                $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
-             }
-            );
         }
         return back()->withErrors(['msg'=>'Ошибка удаления']);
     }
@@ -120,17 +105,18 @@ class RequestController extends Controller
         if (Auth::user()->isAdmin) {
             $item = TestRequest::find($id);
             $userId = $item->user_id;
-            $data = ['status' => 1];
+            $data = ['status' => 1]; //статус = 1, значит заявка принята
             $item->fill($data);
             $item->save();
-            if (Auth::user()->isAdmin) {
-                $userEmail = User::find($userId)->email;
-                Mail::send(['text'=>"mail_accept"], ['name', ''], function ($message) use ($userEmail)
-                {
-                    $message->to($userEmail, '')->subject('Заявка закрыта');
-                    $message->from(getenv('MAIL_USERNAME'), 'Заявка закрыта');
-                });
-            }
+            $userEmail = User::find($userId)->email;
+
+            //Перенёс бы в обсервер, но кажется, что определить своё событие для обсервера - сложно
+            Mail::send(['text'=>"mail_accept"], ['name', ''], function ($message) use ($userEmail)
+            {
+                $message->to($userEmail, '')->subject('Заявка закрыта');
+                $message->from(getenv('MAIL_USERNAME'), 'Заявка закрыта');
+            });
+
             if ($item) {
                 return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
             }
