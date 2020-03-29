@@ -32,16 +32,43 @@
 			@endif
 		</div>
 		<br>
+
+		@if ($errors->any())
+			<div class="col-md-11">
+				<div class="alert alert-danger" role='alert'>
+					<button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+						<span aria-hidden='true'>x</span>
+					</button>
+					<ul>
+						@foreach($errors->all() as $errorTxt)
+							<li> {{$errorTxt}} </li>
+						@endforeach
+					</ul>
+				</div>
+			</div>
+		@endif		
 		<h1>Оставить сообщение</h1>
 		<div class="card">
-			<div class="card-body">
-				<form action="" method='POST'>
-					@csrf
-					<textarea name="message"  cols="100" rows="10"></textarea>
-					<br>
-					<button type='submit' class='btn btn-success'>Оставить сообщение</button>
-				</form>
-			</div>
+			<form action="{{route('messages.store')}}" method='POST'>
+				@csrf
+				<textarea name="text"  cols="100" rows="10"></textarea>
+				<input type="hidden" name='test_request_id' value ='{{$itemRequest->id}}'>
+				<input type="hidden" name='user_id' value='{{Auth::user()->id}}'>
+				<input type="hidden" name='created_at' value='{{Carbon\Carbon::now()}}'>
+				<br>
+				<button type='submit' class='btn btn-success mb-25'>Оставить сообщение</button>
+			</form>
+		</div>
+
+		<div class="card mt-25">
+			@foreach ($itemRequest->messages as $message)
+				<div class="card-body">
+					<h2>{{$message->user->name}}</h2>
+					<p>{{$message->text}}</p>
+					<time>{{$message->created_at}}</time>
+				</div>
+				<br>	
+			@endforeach
 		</div>
 	</div>
 @endsection

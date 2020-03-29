@@ -18,7 +18,7 @@ class MessagesTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('test_request_id')->unsigned();
             $table->text('text');
-            $table->foreign('user_id')->references('id')->on('users');            
+            $table->foreign('user_id')->references('id')->on('users');       
             $table->foreign('test_request_id')->references('id')->on('test_requests');  
             $table->timestamps();
         });

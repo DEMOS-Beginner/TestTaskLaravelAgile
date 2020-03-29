@@ -25,7 +25,7 @@ class RequestController extends Controller
         if (!Auth::user()->isAdmin) {
             $userRequests = (new TestRequest())->all()->where('user_id', '==', $userId);
         } else {
-            $userRequests = (new TestRequest())->select()->where('status', '==', 0)->orderBy('created_at')->with(['user:id,name', 'messages'])->get();
+            $userRequests = (new TestRequest())->select()->where('status', '==', 0)->orderBy('created_at')->with(['user:id,name'])->get();
    
         }
         return view('requests.index', compact('userRequests'));
@@ -82,7 +82,7 @@ class RequestController extends Controller
      */
     public function show($id)
     {
-        $itemRequest = TestRequest::find($id);
+        $itemRequest = (new TestRequest())->find($id)->with(['messages'])->first();
         return view('requests.show', compact('itemRequest'));
     }
 

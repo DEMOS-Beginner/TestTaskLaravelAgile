@@ -36,7 +36,7 @@
 					</div>
 					<textarea name="text" cols="200" rows="10"></textarea>
 					<input type="hidden" name='user_id' value='{{Auth::user()->id}}'>
-					<input type="hidden" name='created-at' value='{{Carbon\Carbon::now()}}'>
+					<input type="hidden" name='created_at' value='{{Carbon\Carbon::now()}}'>
 					<input type="hidden" name='status' value='0'>
 					<input type="file" name='filename'>
 				</div>
