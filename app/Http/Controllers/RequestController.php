@@ -23,9 +23,10 @@ class RequestController extends Controller
         
 
         if (!Auth::user()->isAdmin) {
-            $userRequests = TestRequest::all()->where('user_id', '==', $userId);
+            $userRequests = (new TestRequest())->all()->where('user_id', '==', $userId);
         } else {
-            $userRequests = TestRequest::all()->where('status', '==', 0);            
+            $userRequests = (new TestRequest())->select()->where('status', '==', 0)->orderBy('created_at')->with(['user:id,name', 'messages'])->get();
+   
         }
         return view('requests.index', compact('userRequests'));
     }
@@ -86,29 +87,6 @@ class RequestController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -132,31 +110,33 @@ class RequestController extends Controller
     }
 
     /**
-     * Close the specified resource from storage.
+     * Accept request.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function accept($id)
     {
-        $item = TestRequest::find($id);
-        $userId = $item->user_id;
-        $data = ['status' => 1];
-        $item->fill($data);
-        $item->save();
         if (Auth::user()->isAdmin) {
-            $userEmail = User::find($userId)->email;
-            Mail::send(['text'=>"mail_accept"], ['name', ''], function ($message) use ($userEmail)
-            {
-                $message->to($userEmail, '')->subject('Заявка закрыта');
-                $message->from(getenv('MAIL_USERNAME'), 'Заявка закрыта');
-            });
+            $item = TestRequest::find($id);
+            $userId = $item->user_id;
+            $data = ['status' => 1];
+            $item->fill($data);
+            $item->save();
+            if (Auth::user()->isAdmin) {
+                $userEmail = User::find($userId)->email;
+                Mail::send(['text'=>"mail_accept"], ['name', ''], function ($message) use ($userEmail)
+                {
+                    $message->to($userEmail, '')->subject('Заявка закрыта');
+                    $message->from(getenv('MAIL_USERNAME'), 'Заявка закрыта');
+                });
+            }
+            if ($item) {
+                return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
+            }
+            return back()->withErrors(['msg'=>'Ошибка при закрытии']);            
         }
-        if ($item) {
-            return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
-        }
-        return back()->withErrors(['msg'=>'Ошибка при закрытии']);
-    }
 
+    }
 
 }

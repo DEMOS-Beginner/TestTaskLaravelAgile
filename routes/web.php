@@ -18,7 +18,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
-	Route::resource('/requests', 'RequestController')->names('requests');
+	Route::resource('/requests', 'RequestController')->except(['edit', 'update'])->names('requests');
+});
+
+Route::group(['middleware' => 'auth'], function () {
+	Route::resource('/messages', 'MessageController')->only(['store'])->names('messages');
 });
 
 Route::get('/requests/{id}/accept', 'RequestController@accept')->name('requests.accept');
