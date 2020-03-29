@@ -59,20 +59,13 @@ class RequestController extends Controller
             $data['filename'] = $path;
         }
 
-        //Проверяем разницу между датой последней заявки и этой
-        $newestRequest = (new TestRequest())->select()->orderBy('created_at', 'desc')->first();
-        $first_date = new DateTime($newestRequest->created_at);
-        $second_date = new DateTime($data['created_at']);
-        $interval = $second_date->diff($first_date);
 
-        if ($interval->days >= 1) {
-            $item = (new TestRequest())->create($data);
-            if ($item) {
-                return redirect()->route('requests.index', [$item->id])->with(['success'=>'Успешно сохранено']);
-            }
-        } else {
-            return back()->withErrors(['msg'=>"Ошибка сохранения (Отправлять заявки можно раз в сутки)"])->withInput();
+        $item = (new TestRequest())->create($data);
+        if ($item) {
+            return redirect()->route('requests.index', [$item->id])->with(['success'=>'Успешно сохранено']);
         }
+        return back()->withErrors(['msg'=>"Ошибка сохранения (Отправлять заявки можно раз в сутки)"])->withInput();
+
 
 
                    
