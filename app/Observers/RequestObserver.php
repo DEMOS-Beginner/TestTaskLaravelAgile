@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\TestRequest;
 use Mail;
 use Config;
+use Illuminate\Support\Facades\Auth;
 
 class RequestObserver
 {
@@ -16,11 +17,14 @@ class RequestObserver
      */
     public function created(TestRequest $testRequest)
     {
-        Mail::send(['text'=>"mail"], ['name', ''], function ($message) {
-            $message->to(Config::get('constants.emails.manager_email'), '')->subject('Новая заявка');
-            $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
+        if (Auth::user()) {
+            Mail::send(['text'=>"mail"], ['name', ''], function ($message) {
+                $message->to(Config::get('constants.emails.manager_email'), '')->subject('Новая заявка');
+                $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
+            }
+            );            
         }
-        );
+
     }
 
     /**
@@ -31,10 +35,13 @@ class RequestObserver
      */
     public function deleted(TestRequest $testRequest)
     {
-        Mail::send(['text'=>"mail_close"], ['name', ''], function ($message) {
-            $message->to(Config::get('constants.emails.manager_email'), '')->subject('Заявка закрыта');
-            $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
-         }
-        );
+        if (Auth::user()) {
+            Mail::send(['text'=>"mail_close"], ['name', ''], function ($message) {
+                $message->to(Config::get('constants.emails.manager_email'), '')->subject('Заявка закрыта');
+                $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
+            }
+            );           
+        }
+
     }
 }
