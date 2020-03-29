@@ -82,7 +82,7 @@ class RequestController extends Controller
      */
     public function show($id)
     {
-        $itemRequest = (new TestRequest())->find($id)->with(['messages'])->first();
+        $itemRequest = (new TestRequest())->find($id);
         return view('requests.show', compact('itemRequest'));
     }
 

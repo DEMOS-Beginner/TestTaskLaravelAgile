@@ -62,12 +62,14 @@
 
 		<div class="card mt-25">
 			@foreach ($itemRequest->messages as $message)
-				<div class="card-body">
-					<h2>{{$message->user->name}}</h2>
-					<p>{{$message->text}}</p>
-					<time>{{$message->created_at}}</time>
-				</div>
-				<br>	
+				@if ($message->test_request_id === $itemRequest->id)
+					<div class="card-body">
+						<h2>{{$message->user->name}}</h2>
+						<p>{{$message->text}}</p>
+						<time>{{$message->created_at}}</time>
+					</div>
+					<br>	
+				@endif
 			@endforeach
 		</div>
 	</div>
