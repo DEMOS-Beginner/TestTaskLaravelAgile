@@ -145,12 +145,9 @@ class RequestController extends Controller
 
         if (Auth::user()->isAdmin) {
             $userRequests = (new TestRequest())->select()->orderBy('created_at')->with(['user:id,name'])->get();
-
-
             $userRequests = (new RequestsFilter($userRequests, $request))->apply();
 
         }
-
 
         return view('requests.index', compact('userRequests'));
     }

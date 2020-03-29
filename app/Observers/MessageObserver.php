@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 use App\Models\Message;
+use App\Models\TestRequest;
 use Mail;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,8 @@ class MessageObserver
      */
     public function created(Message $msg)
     {
-        $userEmail = User::find($msg->user_id)->email;
+        $userId = TestRequest::find($msg->test_request_id)->user_id;
+        $userEmail = User::find($userId)->email;
 
         if (Auth::user()->isAdmin) {
             Mail::send(['text'=>"mail_message_for_user"], ['name', ''], function ($message) use ($userEmail) {
