@@ -26,3 +26,5 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::get('/requests/{id}/accept', 'RequestController@accept')->name('requests.accept');
+
+Route::get('/filter', 'RequestController@filter')->name('filter');

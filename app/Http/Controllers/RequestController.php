@@ -8,6 +8,7 @@ use App\Models\TestRequest;
 use Illuminate\Support\Facades\Auth;
 use Mail;
 use App\User;
+use App\RequestsFilter;
 
 class RequestController extends Controller
 {
@@ -24,7 +25,8 @@ class RequestController extends Controller
         if (!Auth::user()->isAdmin) { 
             $userRequests = (new TestRequest())->all()->where('user_id', '==', $userId);
         } else {
-            $userRequests = (new TestRequest())->select()->where('status', '==', 0)->orderBy('created_at')->with(['user:id,name'])->get(); 
+            $userRequests = (new TestRequest())->select()->orderBy('created_at')->with(['user:id,name'])->get();
+
         }
 
         return view('requests.index', compact('userRequests'));
@@ -74,6 +76,10 @@ class RequestController extends Controller
     public function show($id)
     {
         $itemRequest = (new TestRequest())->find($id);
+        if ($itemRequest && Auth::user()->isAdmin) {
+            $itemRequest->fill(['status' => 2]); //status = 2 - менеджер просмотрел объявление
+            $itemRequest->save();
+        }
         return view('requests.show', compact('itemRequest'));
     }
 
@@ -123,6 +129,25 @@ class RequestController extends Controller
             return back()->withErrors(['msg'=>'Ошибка при закрытии']);            
         }
 
+    }
+
+
+    /**
+    * Filter Index page for manager
+    *
+    */
+    public function filter(Request $request) {
+
+        if (Auth::user()->isAdmin) {
+            $userRequests = (new TestRequest())->select()->orderBy('created_at')->with(['user:id,name'])->get();
+
+
+            $userRequests = (new RequestsFilter($userRequests, $request))->apply();
+
+        }
+
+
+        return view('requests.index', compact('userRequests'));
     }
 
 }

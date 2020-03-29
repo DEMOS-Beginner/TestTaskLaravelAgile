@@ -8,7 +8,7 @@
 				{{$itemRequest->text}}
 			</div>
 			<time>{{$itemRequest->created_at}}</time>
-			@if (!Auth::user()->isAdmin && $itemRequest->status === 0)
+			@if (!Auth::user()->isAdmin && $itemRequest->status !== 1)
 
 				<form action="{{route('requests.destroy', $itemRequest->id)}}" method='POST'>
 					@method('DELETE')
@@ -30,6 +30,12 @@
 					Заявка принята менеджером
 				</i>
 			@endif
+			@if ($itemRequest->status === 2)
+				<i style='color: gray'>
+					Заявка просмотрена менеджером
+				</i>
+			@endif
+
 		</div>
 		<br>
 
