@@ -21,4 +21,4 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('/requests', 'RequestController')->names('requests');
 });
 
-Route::get('/requests/{id}/close', 'RequestController@close')->name('requests.close');
+Route::get('/requests/{id}/accept', 'RequestController@accept')->name('requests.accept');

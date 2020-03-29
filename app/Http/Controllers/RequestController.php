@@ -21,7 +21,7 @@ class RequestController extends Controller
     {
         $userId = Auth::user()->id; //Only authentificated users can use this method (Auth 100%)
         
-        $columns = ['id', 'title', 'parent_id'];
+
         if (!Auth::user()->isAdmin) {
             $userRequests = TestRequest::all()->where('user_id', '==', $userId);
         } else {
@@ -61,11 +61,11 @@ class RequestController extends Controller
         $item->save();
 
         if ($item) {
-/*            Mail::send(['text'=>"mail"], ['name', ''], function ($message) {
+            Mail::send(['text'=>"mail"], ['name', ''], function ($message) {
                 $message->to('dima.dmitry1234.maksimov@mail.ru', '')->subject('Новая заявка');
                 $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
             }
-            );*/
+            );
 
             return redirect()->route('requests.index', [$item->id])->with(['success'=>'Успешно сохранено']);
         } else {
@@ -117,12 +117,16 @@ class RequestController extends Controller
     public function destroy($id)
     {
 
-        dd(__METHOD__);
         $result = TestRequest::destroy($id);
 
 
         if ($result) {
             return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
+            Mail::send(['text'=>"mail_close"], ['name', ''], function ($message) {
+                $message->to('dima.dmitry1234.maksimov@mail.ru', '')->subject('Заявка закрыта');
+                $message->from(getenv('MAIL_USERNAME'), 'Новая заявка');
+             }
+            );
         }
         return back()->withErrors(['msg'=>'Ошибка удаления']);
     }
@@ -133,22 +137,21 @@ class RequestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function close($id)
+    public function accept($id)
     {
         $item = TestRequest::find($id);
         $userId = $item->user_id;
         $data = ['status' => 1];
         $item->fill($data);
         $item->save();
-         dd(__METHOD__);
-/*        if (Auth::user()->isAdmin) {
+        if (Auth::user()->isAdmin) {
             $userEmail = User::find($userId)->email;
-            Mail::send(['text'=>"mail_destroy"], ['name', ''], function ($message) use ($userEmail)
+            Mail::send(['text'=>"mail_accept"], ['name', ''], function ($message) use ($userEmail)
             {
                 $message->to($userEmail, '')->subject('Заявка закрыта');
                 $message->from(getenv('MAIL_USERNAME'), 'Заявка закрыта');
             });
-        }*/
+        }
         if ($item) {
             return redirect()->route('requests.index')->with(['success'=>"Заявка $id закрыта"]);
         }

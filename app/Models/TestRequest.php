@@ -22,4 +22,13 @@ class TestRequest extends Model
     public function user() {
     	return $this->belongsTo(User::class);
     }
+
+    /**
+    * Сообщения в теме этой заявки
+    *
+    * @return \Illuminate\Database\Eloquent\Relations\BelongsTo;
+    */
+    public function messages() {
+        return $this->hasMany(Message::class);
+    }   
 }
