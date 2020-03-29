@@ -21,7 +21,7 @@
 			@if($userRequests && $userRequests->count())
 
 				@if(!Auth::user()->isAdmin)
-				<div class="card">
+				<div class="col-md-12">
 				@else
 				<div class="col-md-8">
 				@endif
@@ -62,7 +62,7 @@
 				</div>
 
 			@else
-			
+
 				<div class="col-md-8">
 					@if (!Auth::user()->isAdmin)
 					<h2>Вы ещё не оставляли заявок</h2>
@@ -76,25 +76,26 @@
 				</div>
 
 			@endif
-				<div class="col-md-4">
-					<div class="card-body">
-						<h2>Фильтрация</h2>
-						<form action="{{route('filter')}}">
-							<input type="checkbox" name='looked'>
-							<label for="looked">Просмотрено</label>
-							<input type="checkbox" name='no_looked'>
-							<label for="no_looked">Не просмотрено</label>
-							<br>
-							<input type="checkbox" name='opened'>
-							<label for="opened">Открытые заявки</label>
-							<input type="checkbox" name='accepted'>
-							<label for="accepted">Закрытые заявки</label>
+				@if(Auth::user()->isAdmin)
+					<div class="col-md-4">
+						<div class="card-body">
+							<h2>Фильтрация</h2>
+							<form action="{{route('filter')}}">
+								<input type="checkbox" name='looked'>
+								<label for="looked">Просмотрено</label>
+								<input type="checkbox" name='no_looked'>
+								<label for="no_looked">Не просмотрено</label>
+								<br>
+								<input type="checkbox" name='opened'>
+								<label for="opened">Открытые заявки</label>
+								<input type="checkbox" name='accepted'>
+								<label for="accepted">Закрытые заявки</label>
 
-							<button type='submit' class='btn btn-primary'>Отфильтровать</button>
-						</form>
-					</div>
-				</div>			
-		
+								<button type='submit' class='btn btn-primary'>Отфильтровать</button>
+							</form>
+						</div>
+					</div>			
+				@endif
 		</div>
 	</div>
 
