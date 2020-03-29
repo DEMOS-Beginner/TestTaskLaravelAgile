@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Mail;
 use App\User;
 use App\RequestsFilter;
+use DateTime;
 
 class RequestController extends Controller
 {
@@ -58,12 +59,23 @@ class RequestController extends Controller
             $data['filename'] = $path;
         }
 
-        $item = (new TestRequest())->create($data);
+        //Проверяем разницу между датой последней заявки и этой
+        $newestRequest = (new TestRequest())->select()->orderBy('created_at', 'desc')->first();
+        $first_date = new DateTime($newestRequest->created_at);
+        $second_date = new DateTime($data['created_at']);
+        $interval = $second_date->diff($first_date);
 
-        if ($item) {
-            return redirect()->route('requests.index', [$item->id])->with(['success'=>'Успешно сохранено']);
+        if ($interval->days >= 1) {
+            $item = (new TestRequest())->create($data);
+            if ($item) {
+                return redirect()->route('requests.index', [$item->id])->with(['success'=>'Успешно сохранено']);
+            }
+        } else {
+            return back()->withErrors(['msg'=>"Ошибка сохранения (Отправлять заявки можно раз в сутки)"])->withInput();
         }
-        return back()->withErrors(['msg'=>"Ошибка сохранения"])->withInput();           
+
+
+                   
               
     }
 

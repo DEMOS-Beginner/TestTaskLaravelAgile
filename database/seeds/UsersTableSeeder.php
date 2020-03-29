@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Config as C;
 
 class UsersTableSeeder extends Seeder
 {
@@ -14,7 +15,7 @@ class UsersTableSeeder extends Seeder
         $data = [
         	[
         		'name'     => 'Manager',
-        		'email'    => 'dima.dmitry1234.maksimov@mail.ru',
+        		'email'    => Config::get('constants.emails.manager_email'),
         		'password' => bcrypt('Manager'),
                 'isAdmin'  => '1'
         	],
